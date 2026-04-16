@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyOS — Placement Prep Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">Study<span>OS</span></div>
+    <div class="topbar-right">
+      <div class="date-chip" id="date-chip"></div>
+      <div class="streak-badge">🔥 <span id="streak-count">0</span> day streak</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-accent" style="background:var(--apt)"></div>
+      <div class="stat-label">Tasks Done</div>
+      <div class="stat-val" id="s-done">0</div>
+      <div class="stat-sub">today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-accent" style="background:var(--dsa)"></div>
+      <div class="stat-label">Problems Solved</div>
+      <div class="stat-val" id="s-lc">0</div>
+      <div class="stat-sub">DSA & Coding</div>
+    </div>
+    <div class="stat">
+      <div class="stat-accent" style="background:var(--sem)"></div>
+      <div class="stat-label">Total Tasks</div>
+      <div class="stat-val" id="s-total">0</div>
+      <div class="stat-sub">across all areas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-accent" style="background:var(--dev)"></div>
+      <div class="stat-label">Progress</div>
+      <div class="stat-val" id="s-pct">0%</div>
+      <div class="stat-sub">completion</div>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('overview')"><span class="dot" style="background:#888"></span><span class="tab-label">Overview</span></button>
+    <button class="nav-tab" onclick="switchTab('apt')"><span class="dot" style="background:var(--apt)"></span><span class="tab-label">Aptitude</span></button>
+    <button class="nav-tab" onclick="switchTab('dsa')"><span class="dot" style="background:var(--dsa)"></span><span class="tab-label">DSA</span></button>
+    <button class="nav-tab" onclick="switchTab('sem')"><span class="dot" style="background:var(--sem)"></span><span class="tab-label">Semester</span></button>
+    <button class="nav-tab" onclick="switchTab('dev')"><span class="dot" style="background:var(--dev)"></span><span class="tab-label">Dev</span></button>
+    <button class="nav-tab" onclick="switchTab('timer')"><span class="dot" style="background:#ff6b6b"></span><span class="tab-label">Timer</span></button>
+    <button class="nav-tab" onclick="switchTab('daily')"><span class="dot" style="background:var(--apt)"></span><span class="tab-label">Daily Log</span></button>
+    <button class="nav-tab" onclick="switchTab('analytics')"><span class="dot" style="background:#4c6ef5"></span><span class="tab-label">Analytics</span></button>
+    <button class="nav-tab" onclick="switchTab('search')"><span class="dot" style="background:#c0eb75"></span><span class="tab-label">Search</span></button>
+    <button class="nav-tab" onclick="switchTab('settings')"><span class="dot" style="background:#b197fc"></span><span class="tab-label">Settings</span></button>
+    <button class="nav-tab" onclick="switchTab('streak')"><span class="dot" style="background:var(--red)"></span><span class="tab-label">Streak</span></button>
+  </div>
+
+  <!-- OVERVIEW PANEL -->
+  <div class="panel active" id="panel-overview">
+    <div class="overview-grid" id="overview-grid-new"></div>
+    <div style="background:var(--bg2); border-radius:0.5rem; padding:1.5rem; margin-top:2rem;">
+      <div class="ov-header"><span class="ov-icon">📊</span><span class="ov-title">Area Progress</span></div>
+      <div id="ov-areas"></div>
+    </div>
+    <div style="background:var(--bg2); border-radius:0.5rem; padding:1.5rem; margin-top:1rem;">
+      <div class="ov-header"><span class="ov-icon">⚡</span><span class="ov-title">DSA Problems Solved</span></div>
+      <div id="ov-lc"></div>
+      </div>
+    </div>
+    <div class="overview-card full-width">
+      <div class="ov-header"><span class="ov-icon">📋</span><span class="ov-title">Recent Pending Tasks</span></div>
+      <div id="ov-pending"></div>
+    </div>
+  </div>
+
+  <!-- AREA PANELS -->
+  <div class="panel" id="panel-apt"></div>
+  <div class="panel" id="panel-dsa"></div>
+  <div class="panel" id="panel-sem"></div>
+  <div class="panel" id="panel-dev"></div>
+
+  <!-- DAILY LOG PANEL -->
+  <div class="panel" id="panel-daily">
+    <div id="daily-summary" style="background:var(--bg2); border-radius:0.5rem; margin-bottom:2rem;"></div>
+    <div style="background:var(--bg2); border-radius:0.5rem; padding:1.5rem;">
+      <h3 style="margin:0 0 1rem 0; color:var(--text)">📝 Log Study Session</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+        <div>
+          <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Area</label>
+          <select id="session-area" style="width:100%; padding:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.3rem; color:var(--text); font-family:'Syne',sans-serif;">
+            <option value="">Choose area...</option>
+            <option value="apt">📚 Aptitude</option>
+            <option value="dsa">🔧 DSA</option>
+            <option value="sem">📖 Semester</option>
+            <option value="dev">💻 Dev</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Duration (minutes)</label>
+          <input type="number" id="session-time" placeholder="35" style="width:100%; padding:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.3rem; color:var(--text); font-family:'Syne',sans-serif;">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Problems Solved</label>
+        <input type="number" id="session-problems" placeholder="4" style="width:100%; padding:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.3rem; color:var(--text); font-family:'Syne',sans-serif; margin-bottom:1rem;">
+      </div>
+      <div>
+        <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Notes (optional)</label>
+        <input type="text" id="session-notes" placeholder="e.g., Solved 2 LeetCode medium, 2 offline problems..." style="width:100%; padding:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.3rem; color:var(--text); font-family:'Syne',sans-serif; margin-bottom:1rem;">
+      </div>
+      <button onclick="addSessionFromUI()" style="width:100%; padding:0.75rem; background:var(--apt); color:white; border:none; border-radius:0.3rem; font-size:0.95rem; font-weight:600; cursor:pointer; font-family:'Syne',sans-serif;">✓ Log Session</button>
+    </div>
+  </div>
+
+  <!-- STREAK PANEL -->
+  <div class="panel" id="panel-streak">
+    <div class="streak-grid-wrap">
+      <div class="streak-header">
+        <div class="streak-title">Activity Calendar</div>
+        <div class="streak-hint">Click a day to mark it active</div>
+      </div>
+      <div id="streak-calendar"></div>
+    </div>
+  </div>
+
+  <!-- TIMER PANEL (NEW) -->
+  <div class="panel" id="panel-timer">
+    <div style="max-width:500px; margin:0 auto; text-align:center; padding-top:2rem;">
+      <div style="background:var(--bg2); border-radius:0.5rem; padding:3rem 2rem;">
+        <h2 style="margin:0 0 2rem 0; color:var(--text); font-size:3rem;">🍅 Pomodoro Timer</h2>
+        
+        <div style="background:var(--bg3); border-radius:0.35rem; padding:2rem; margin-bottom:2rem;">
+          <div id="timer-phase" style="font-size:0.95rem; color:var(--dsa); font-weight:600; margin-bottom:1rem;">💪 Work</div>
+          <div id="timer-display" style="font-size:4rem; font-weight:800; color:var(--dsa); font-family:'JetBrains Mono',monospace; margin-bottom:1rem; letter-spacing:0.1em;">25:00</div>
+          <div style="font-size:0.9rem; color:var(--text2);">Cycles: <span id="timer-cycles" style="font-weight:700; color:var(--dsa);">0</span></div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin-bottom:2rem;">
+          <button id="timer-start-btn" onclick="startTimer()" style="padding:0.75rem; background:var(--dsa); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-size:0.95rem; font-family:'Syne',sans-serif;">▶️ Start</button>
+          <button onclick="pauseTimer()" style="padding:0.75rem; background:var(--text3); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-size:0.95rem; font-family:'Syne',sans-serif;">⏸️ Pause</button>
+          <button onclick="resetTimer()" style="padding:0.75rem; background:var(--bg3); color:var(--text); border:1px solid var(--border); border-radius:0.3rem; cursor:pointer; font-weight:600; font-size:0.95rem; font-family:'Syne',sans-serif;">🔄 Reset</button>
+        </div>
+        
+        <div style="margin-bottom:1.5rem;">
+          <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Work Duration (minutes)</label>
+          <input type="number" id="timer-work-mins" value="25" min="1" max="60" style="width:100%; padding:0.5rem; background:var(--bg2); border:1px solid var(--border); border-radius:0.25rem; color:var(--text); font-family:'Syne',sans-serif; margin-bottom:1rem;">
+          
+          <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Break Duration (minutes)</label>
+          <input type="number" id="timer-break-mins" value="5" min="1" max="30" style="width:100%; padding:0.5rem; background:var(--bg2); border:1px solid var(--border); border-radius:0.25rem; color:var(--text); margin-bottom:1rem;">
+          
+          <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Study Area</label>
+          <select id="timer-area" style="width:100%; padding:0.5rem; background:var(--bg2); border:1px solid var(--border); border-radius:0.25rem; color:var(--text); font-family:'Syne',sans-serif; margin-bottom:1rem;">
+            <option value="dsa">🔧 DSA</option>
+            <option value="apt">🧠 Aptitude</option>
+            <option value="sem">📖 Semester</option>
+            <option value="dev">💻 Development</option>
+          </select>
+        </div>
+        
+        <button onclick="saveTimerSession()" style="width:100%; padding:0.75rem; background:var(--apt); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-size:0.95rem; font-family:'Syne',sans-serif;">💾 Save Session</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS PANEL (NEW) -->
+  <div class="panel" id="panel-analytics">
+    <div id="analytics-content" style="padding:1.5rem;"></div>
+  </div>
+
+  <!-- SEARCH PANEL (NEW) -->
+  <div class="panel" id="panel-search">
+    <div style="background:var(--bg2); border-radius:0.5rem; padding:1.5rem;">
+      <h3 style="margin:0 0 1.5rem 0; color:var(--text);">🔍 Search Questions, Topics & Notes</h3>
+      
+      <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+        <input type="text" id="search-input" placeholder="Search..." style="flex:1; padding:0.75rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.3rem; color:var(--text); font-family:'Syne',sans-serif;" onkeydown="if(event.key==='Enter') performSearch()">
+        <button onclick="performSearch()" style="padding:0.75rem 1.5rem; background:var(--dsa); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-family:'Syne',sans-serif;">Search</button>
+      </div>
+      
+      <div id="search-results" style="min-height:100px;"></div>
+      
+      <div id="recent-searches" style="margin-top:2rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem; font-size:0.95rem;">Recent Searches</div>
+        <div id="recent-list" style="display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PANEL (NEW) -->
+  <div class="panel" id="panel-settings">
+    <div style="background:var(--bg2); border-radius:0.5rem; padding:1.5rem; max-width:600px;">
+      <h3 style="margin:0 0 1.5rem 0; color:var(--text);">⚙️ Settings & Data Management</h3>
+      
+      <div style="margin-bottom:2rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem;">🎨 App Theme</div>
+        <div class="theme-grid">
+          <div class="theme-card active" onclick="setTheme('dark')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#0a0a0f;"></div>
+              <div class="theme-swatch" style="background:#a78bfa;"></div>
+              <div class="theme-swatch" style="background:#34d399;"></div>
+            </div>
+            <div class="theme-name">Dark</div>
+          </div>
+          <div class="theme-card" onclick="setTheme('light')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#f8f9fa;"></div>
+              <div class="theme-swatch" style="background:#8b5cf6;"></div>
+              <div class="theme-swatch" style="background:#10b981;"></div>
+            </div>
+            <div class="theme-name">Light</div>
+          </div>
+          <div class="theme-card" onclick="setTheme('midnight')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#0f0f23;"></div>
+              <div class="theme-swatch" style="background:#c084fc;"></div>
+              <div class="theme-swatch" style="background:#4ade80;"></div>
+            </div>
+            <div class="theme-name">Midnight</div>
+          </div>
+          <div class="theme-card" onclick="setTheme('ocean')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#0a1428;"></div>
+              <div class="theme-swatch" style="background:#818cf8;"></div>
+              <div class="theme-swatch" style="background:#22d3ee;"></div>
+            </div>
+            <div class="theme-name">Ocean</div>
+          </div>
+          <div class="theme-card" onclick="setTheme('forest')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#0b2e1c;"></div>
+              <div class="theme-swatch" style="background:#86efac;"></div>
+              <div class="theme-swatch" style="background:#22c55e;"></div>
+            </div>
+            <div class="theme-name">Forest</div>
+          </div>
+          <div class="theme-card" onclick="setTheme('sunset')">
+            <div class="theme-preview">
+              <div class="theme-swatch" style="background:#3d1f0f;"></div>
+              <div class="theme-swatch" style="background:#fda4af;"></div>
+              <div class="theme-swatch" style="background:#fdba74;"></div>
+            </div>
+            <div class="theme-name">Sunset</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="border-top:1px solid var(--border); padding-top:1.5rem; margin-bottom:2rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem;">Timer Settings</div>
+        <div style="display:grid; gap:1rem;">
+          <div>
+            <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Work Duration (minutes)</label>
+            <input type="number" id="settings-work-mins" value="25" min="1" max="60" style="width:100%; padding:0.5rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.25rem; color:var(--text);">
+          </div>
+          <div>
+            <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Break Duration (minutes)</label>
+            <input type="number" id="settings-break-mins" value="5" min="1" max="30" style="width:100%; padding:0.5rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.25rem; color:var(--text);">
+          </div>
+        </div>
+      </div>
+      
+      <div style="border-top:1px solid var(--border); padding-top:1.5rem; margin-bottom:2rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem;">🎯 Daily Mission Targets</div>
+        <div style="display:grid; gap:1rem;">
+          <div>
+            <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Daily Study Hours Target</label>
+            <input type="number" id="mission-hours" value="5" min="1" max="12" step="0.5" style="width:100%; padding:0.5rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.25rem; color:var(--text);">
+          </div>
+          <div>
+            <label style="font-size:0.85rem; color:var(--text2); display:block; margin-bottom:0.5rem;">Daily Questions Target</label>
+            <input type="number" id="mission-questions" value="10" min="1" max="50" style="width:100%; padding:0.5rem; background:var(--bg3); border:1px solid var(--border); border-radius:0.25rem; color:var(--text);">
+          </div>
+          <button onclick="saveMissionSettings()" style="width:100%; padding:0.5rem; background:var(--dev); color:white; border:none; border-radius:0.25rem; cursor:pointer; font-weight:600; font-family:'Syne',sans-serif; font-size:0.9rem;">💾 Save Targets</button>
+        </div>
+      </div>
+      
+      <div style="border-top:1px solid var(--border); padding-top:1.5rem; margin-bottom:2rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem;">Notifications</div>
+        <label style="display:flex; align-items:center; gap:0.75rem; cursor:pointer;">
+          <input type="checkbox" id="settings-notifications" checked style="cursor:pointer;">
+          <span style="color:var(--text2); font-size:0.9rem;">Enable notification sounds</span>
+        </label>
+      </div>
+      
+      <div style="border-top:1px solid var(--border); padding-top:1.5rem;">
+        <div style="font-weight:600; color:var(--text); margin-bottom:1rem; font-size:0.95rem;">📊 Data Management</div>
+        <div style="display:grid; gap:0.75rem;">
+          <button onclick="exportDataAsJSON()" style="width:100%; padding:0.75rem; background:var(--apt); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-family:'Syne',sans-serif;">📥 Export Data (JSON)</button>
+          <button onclick="document.getElementById('import-file').click()" style="width:100%; padding:0.75rem; background:var(--dsa); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-family:'Syne',sans-serif;">📤 Import Data (JSON)</button>
+          <input type="file" id="import-file" accept=".json" style="display:none;" onchange="handleFileImport(event)">
+          <button onclick="clearAllDataWithConfirm()" style="width:100%; padding:0.75rem; background:var(--red); color:white; border:none; border-radius:0.3rem; cursor:pointer; font-weight:600; font-family:'Syne',sans-serif;">🗑️ Clear All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
